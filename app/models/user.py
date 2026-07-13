@@ -1,6 +1,7 @@
 from datetime import datetime
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import String,Integer,Boolean,DateTime
+from sqlalchemy.orm import relationship
 
 from app.core.database import Base
 
@@ -39,4 +40,10 @@ class User(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
         default=datetime.utcnow
+    )
+
+    tasks = relationship(
+        "Task",
+        back_populates="owner",
+        cascade="all, delete"
     )
