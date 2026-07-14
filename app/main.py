@@ -25,6 +25,11 @@ app.middleware("http")(logging_middleware)
 app.include_router(user_router)
 app.include_router(task_router)
 
+
+@app.get("/")
+def root():
+    return {"message": "my fastapi application is running"}
+
 app.add_exception_handler(
     TaskNotFoundException,
     task_not_found_handler
