@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
+from sqlalchemy import asc, desc, or_
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
@@ -6,6 +7,10 @@ from app.dependencies.current_user import get_current_user
 from app.models.user import User
 from app.models.task import Task
 from app.schemas.task import TaskCreate, TaskResponse, TaskUpdate
+
+from app.exceptions.costom_exceptions import (
+    TaskNotFoundException,
+)
 
 router = APIRouter(
     prefix="/tasks",
@@ -35,15 +40,16 @@ def create_task(
     return new_task
 
 #getting filtered task of login user
-@router.get("",
-    response_model=list[TaskResponse]
-)
-def get_tasks(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    tasks = db.query(Task).filter(Task.owner_id == current_user.id).all()
-    return tasks
+
+# @router.get("",
+#     response_model=list[TaskResponse]
+# )
+# def get_tasks(
+#     db: Session = Depends(get_db),
+#     current_user: User = Depends(get_current_user)
+# ):
+#     tasks = db.query(Task).filter(Task.owner_id == current_user.id).all()
+#     return tasks
 
 # #getting specific task
 @router.get(
@@ -57,10 +63,7 @@ def get_task(task_id:int,db: Session = Depends(get_db), current_user: User=Depen
     ).first()
 
     if not task:
-        raise HTTPException(
-            status_code=404,
-            detail="task you requested coluldn't be found"
-        )
+        raise TaskNotFoundException()
     return task
 
 #updating task
@@ -80,10 +83,7 @@ def update_task(
     ).first()
 
     if not task:
-        raise HTTPException(
-            status_code=404,
-            detail="task not found"
-        )
+        raise TaskNotFoundException()
     
     update_data= task_update.model_dump(
         exclude_unset=True
@@ -113,10 +113,8 @@ def delete_task(
     )
 
     if not task:
-        raise HTTPException(
-            status_code=404,
-            detail="task doesn't exist"
-        )
+        raise TaskNotFoundException()
+    
     db.delete(task)
     db.commit()
 
@@ -136,10 +134,7 @@ def complete_task(
     ).first()
 
     if not task:
-        raise HTTPException(
-            status_code=404,
-            detail="Task not found"
-        )
+        raise TaskNotFoundException()
     
     task.completed = True
 
@@ -197,3 +192,64 @@ def complete_task(
 
 #     return tasks
 
+#getting task with pegination , sorting , filtering , and priority
+@router.get(
+    "",
+    response_model=list[TaskResponse]
+)
+def get_tasks(
+    completed: bool | None = None,
+    priority: str | None = None,
+    search: str | None = None,
+    sort_by: str = "created_at",
+    order: str = "desc",
+    skip: int = 0,
+    limit: int = 10,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    query = db.query(Task).filter(
+        Task.owner_id == current_user.id
+    )
+
+    if completed is not None:
+        query = query.filter(
+            Task.completed == completed
+        )
+
+    if priority:
+        query = query.filter(
+            Task.priority == priority
+        )
+
+    if search:
+        query = query.filter(
+            or_(
+                Task.title.ilike(f"%{search}%"),
+                Task.description.ilike(f"%{search}%")
+            )
+        )
+
+    sort_column = getattr(
+        Task,
+        sort_by,
+        Task.created_at
+    )
+
+    if order == "asc":
+        query = query.order_by(
+            asc(sort_column)
+        )
+    else:
+        query = query.order_by(
+            desc(sort_column)
+        )
+
+    tasks = (
+        query
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
+
+    return tasks

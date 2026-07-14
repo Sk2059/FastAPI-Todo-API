@@ -9,7 +9,12 @@ from app.models.user import User
 from app.core.security import hash_password,verify_password,create_access_token
 from app.schemas.user import UserCreate,UserResponse,Token,UserLogin
 
-
+from app.exceptions.costom_exceptions import (
+    UserNotFoundException,
+    InvalidCredentialsException,
+    EmailAlreadyExistsException,
+    UsernameAlreadyExistsException
+)
 
 router = APIRouter(
     prefix="/users",
@@ -28,17 +33,12 @@ def register_user(
 ):
     existing_email = db.query(User).filter(User.email==user.email).first()
     if existing_email:
-        raise HTTPException(
-            status_code=400,
-            detail="Email already registered"
-        )
-     
+        raise EmailAlreadyExistsException()
+    
     existing_username = db.query(User).filter(User.username==user.username).first()
     if existing_username:
-        raise HTTPException(
-            status_code=400,
-            detail="Username already taken"
-        )
+        raise UsernameAlreadyExistsException()
+    
     checked_user = User(
         username=user.username,
         email=user.email,
@@ -63,19 +63,13 @@ def login(
     ).first()
 
     if not user:
-        raise HTTPException(
-            status_code=401,
-            detail="Invalid credentials"
-        )
+        raise UserNotFoundException()
 
     if not verify_password(
         form_data.password,
         user.hashed_password
     ):
-        raise HTTPException(
-            status_code=401,
-            detail="Invalid credentials"
-        )
+        raise InvalidCredentialsException()
 
     token = create_access_token(
         {"sub": str(user.id)}

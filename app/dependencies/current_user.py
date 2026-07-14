@@ -5,6 +5,9 @@ from app.dependencies.auth import oauth2_scheme
 from app.core.database import get_db
 from app.core.security import decode_token
 from app.models.user import User
+from app.exceptions.costom_exceptions import (
+    UserNotFoundException,
+)
 
 def get_current_user(
     token: str = Depends(oauth2_scheme),
@@ -29,9 +32,6 @@ def get_current_user(
     print("USER FOUND:", user)
 
     if user is None:
-        raise HTTPException(
-            status_code=401,
-            detail="User not found"
-        )
+        raise UserNotFoundException()
 
     return user
