@@ -1,6 +1,7 @@
 from fastapi import FastAPI, APIRouter, Depends, HTTPException
 from app.api.router.user import router as user_router
 from app.api.router.task import router as task_router
+from app.middleware.loggging import logging_middleware
 
 from app.exceptions.costom_exceptions import (
     TaskNotFoundException,
@@ -18,6 +19,8 @@ from app.exceptions.handlers import (
     username_exists_handler
 )
 app = FastAPI()
+
+app.middleware("http")(logging_middleware)
 
 app.include_router(user_router)
 app.include_router(task_router)
