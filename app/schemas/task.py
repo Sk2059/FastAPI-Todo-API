@@ -5,7 +5,8 @@ from datetime import datetime
 class TaskCreate(BaseModel):
     title: str
     description: Optional[str] = None
-    completed: str="medium"
+    priority: str = "medium"
+    completed: bool = False
 
 class TaskResponse(BaseModel):
     id: int
