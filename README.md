@@ -1,484 +1,362 @@
-# 🚀 FastAPI Todo API
-
-A production-style Todo API built with **FastAPI**, **PostgreSQL**, **SQLAlchemy**, **Alembic**, and **JWT Authentication**.
-
-This project goes beyond a simple CRUD application and implements many of the patterns used in real backend systems including authentication, authorization, database migrations, protected routes, dependency injection, pagination, and ownership-based access control.
-
----
-
-# 📌 Project Goal
-
-The goal of this project is to learn and implement modern backend development practices using FastAPI while building a realistic API that resembles production systems.
-
-Unlike traditional Todo applications, this API ensures that:
-
-* Users can only access their own tasks.
-* Passwords are never stored in plain text.
-* Routes can be protected using JWT tokens.
-* Database schema changes are version controlled.
-* APIs are scalable and maintainable using proper architecture.
-
----
-
-# 🛠 Tech Stack
-
-## Backend Framework
-
-* FastAPI
-
-## Database
-
-* PostgreSQL
-
-## ORM
-
-* SQLAlchemy 2.0
-
-## Database Migration Tool
-
-* Alembic
-
-## Authentication
-
-* JWT Authentication
-* OAuth2 Password Flow
-
-## Password Hashing
-
-* Passlib + Bcrypt
-
-## Validation
-
-* Pydantic
-
-## Server
-
-* Uvicorn
-
----
-
-# 📂 Project Structure
-
-```text
-app/
-│
-├── api/
-│   └── router/
-│       ├── user.py
-│       └── task.py
-│
-├── core/
-│   ├── config.py
-│   ├── database.py
-│   └── security.py
-│
-├── dependencies/
-│   ├── auth.py
-│   └── current_user.py
-│
-├── models/
-│   ├── user.py
-│   └── task.py
-│
-├── schemas/
-│   ├── user.py
-│   └── task.py
-│
-└── main.py
-```
-
----
-
-# 🔐 Authentication System
-
-The project uses JWT Authentication with OAuth2 Password Flow.
-
-Authentication process:
-
-```text
-User Login
-    ↓
-Email + Password Verification
-    ↓
-JWT Access Token Generation
-    ↓
-Client stores token
-    ↓
-Protected Endpoint Access
-```
-
-Example token:
-
-```text
-Authorization: Bearer <jwt_token>
-```
-
-Protected endpoints require a valid token.
-
----
-
-# 👤 User Features
-
-## User Registration
-
-Creates a new account after validating:
-
-* Email uniqueness
-* Username uniqueness
-* Password hashing
-
-Endpoint:
-
-```http
-POST /users/register
-```
-
-Example Request:
-
-```json
-{
-    "username": "john",
-    "email": "john@example.com",
-    "password": "password123"
-}
-```
-
----
-
-## User Login
-
-Authenticates a user and returns a JWT access token.
-
-Endpoint:
-
-```http
-POST /users/login
-```
-
-Response:
-
-```json
-{
-    "access_token": "jwt_token_here",
-    "token_type": "bearer"
-}
-```
-
----
-
-## Current User Endpoint
-
-Returns the authenticated user information.
-
-Endpoint:
-
-```http
-GET /users/me
-```
-
-This endpoint demonstrates:
-
-* OAuth2 integration
-* Dependency Injection
-* JWT decoding
-* Protected routes
-
----
-
-# ✅ Task Features
-
-## Create Task
-
-Creates a new task for the authenticated user.
-
-Endpoint:
-
-```http
-POST /tasks
-```
-
-Example:
-
-```json
-{
-    "title": "Learn FastAPI",
-    "description": "Complete CRUD section",
-    "priority": "high"
-}
-```
-
-The API automatically assigns ownership:
-
-```text
-owner_id = current_user.id
-```
-
-Users cannot create tasks for other users.
-
----
-
-## Get All Tasks
-
-Returns all tasks belonging to the authenticated user.
-
-Endpoint:
-
-```http
-GET /tasks
-```
-
-Security:
-
-```text
-User A -> Sees User A tasks only
-User B -> Sees User B tasks only
-```
-
----
-
-## Get Single Task
-
-Returns a single task if the authenticated user owns it.
-
-Endpoint:
-
-```http
-GET /tasks/{task_id}
-```
-
-If the task belongs to another user:
-
-```text
-404 Task Not Found
-```
-
-This prevents unauthorized access.
-
----
-
-## Update Task
-
-Allows partial updates of task information.
-
-Endpoint:
-
-```http
-PUT /tasks/{task_id}
-```
-
-Example:
-
-```json
-{
-    "completed": true
-}
-```
-
-Implemented using:
+# FastAPI Todo API 🚀
+
+A production-style FastAPI Todo REST API built with modern backend engineering practices including JWT Authentication, PostgreSQL, Docker, CI/CD, Testing, and Cloud Deployment.
+
+This project was built to learn and demonstrate how real-world backend APIs are designed, tested, containerized, and deployed.
+
+## 📷 API Documentation (Swagger UI)
+
+![Swagger UI](assets/swagger-ui.png)
+
+## 🌐 Live Demo
+
+**Production API:**
+https://fastapi-todo-api-tbm4.onrender.com
+
+**Swagger Documentation:**
+https://fastapi-todo-api-tbm4.onrender.com/docs
+
+## ✨ Features
+
+### Authentication & Authorization
+- User Registration
+- User Login
+- JWT Access Tokens
+- Protected Routes
+- Current User Dependency
+- User-specific data access
+- Ownership verification
+
+### Task Management
+- Create Task
+- Get All Tasks
+- Get Single Task
+- Update Task
+- Delete Task
+- Mark Task as Completed
+
+### Additional Features
+- Pagination Support
+- Request Logging Middleware
+- Custom Exception Handling
+- Environment Variables
+- API Documentation with Swagger
+- Unit Testing
+- Docker Support
+- CI/CD Pipeline
+- Cloud Deployment
+
+## 📚 Learning Phases and Implementation
+
+### Phase 1 — Project Setup
+**Implemented**
+- FastAPI application setup
+- Project structure
+- Modular routing
+- Environment variables
+
+**Concepts Learned**
+- APIRouter
+- Dependency Injection
+- Project organization
+
+### Phase 2 — Database Integration
+**Implemented**
+- PostgreSQL database
+- SQLAlchemy ORM
+- Session management
+- Database dependencies
+
+**Concepts Learned**
+- ORM vs Raw SQL
+- Sessions
+- Dependency Injection for DB
+
+### Phase 3 — User Authentication
+**Implemented**
+- User registration
+- Password hashing
+- Password verification
+- JWT token generation
+
+**Concepts Learned**
+- Authentication
+- Password hashing
+- Access Tokens
+- Security best practices
+
+### Phase 4 — Authorization
+**Implemented**
+- Protected endpoints
+- OAuth2PasswordBearer
+- Current user extraction
+- Route protection
+
+**Concepts Learned**
+- Authorization
+- Bearer Tokens
+- Protected APIs
+
+### Phase 5 — Task CRUD Operations
+**Implemented**
+- Create Task
+- Read Task
+- Update Task
+- Delete Task
+
+**Concepts Learned**
+- REST APIs
+- CRUD operations
+- HTTP methods
+
+### Phase 6 — Ownership Protection
+**Implemented**
+
+Users can only access their own tasks.
 
 ```python
-exclude_unset=True
+task = db.query(Task).filter(
+    Task.id == task_id,
+    Task.owner_id == current_user.id
+).first()
 ```
 
-This ensures only provided fields are updated.
+**Concepts Learned**
+- Multi-user systems
+- Data isolation
+- Authorization rules
 
----
+### Phase 7 — Task Completion Endpoint
+**Implemented**
+- `PATCH /tasks/{task_id}/complete`
+- Allows users to mark tasks as completed
 
-## Delete Task
+**Concepts Learned**
+- PATCH requests
+- Partial updates
 
-Deletes a task owned by the current user.
+### Phase 8 — Pagination
+**Implemented**
+- `GET /tasks?skip=0&limit=10`
 
-Endpoint:
+**Concepts Learned**
+- Offset Pagination
+- Query Parameters
+- Large dataset handling
 
-```http
-DELETE /tasks/{task_id}
+### Phase 9 — Middleware and Exceptions
+**Implemented**
+- Request logging middleware
+- Custom exceptions
+- Error handling
+
+**Concepts Learned**
+- Middleware
+- Request lifecycle
+- Centralized error handling
+
+### Phase 10 — Testing
+**Implemented**
+- Pytest
+- TestClient
+- Authentication tests
+- User registration tests
+
+**Concepts Learned**
+- Unit Testing
+- API Testing
+- Test isolation
+
+### Phase 11 — Dockerization
+**Implemented**
+- Dockerfile
+- Docker Compose
+- PostgreSQL container
+- Multi-service setup
+
+**Concepts Learned**
+- Containerization
+- Docker networking
+- Environment variables in containers
+
+### Phase 12 — Continuous Integration (CI)
+**Implemented**
+
+GitHub Actions pipeline:
+- Install dependencies
+- Run tests automatically
+- Verify application integrity
+
+**Concepts Learned**
+- Automated testing
+- CI pipelines
+- GitHub Actions
+
+### Phase 13 — Continuous Deployment (CD)
+**Implemented**
+- Render Auto Deploy
+- Automatic deployments from GitHub
+
+**Deployment flow:**
+```
+git push
+    ↓
+GitHub
+    ↓
+GitHub Actions (CI)
+    ↓
+Render Deployment (CD)
+    ↓
+Production Server Updated
 ```
 
-Ownership validation is performed before deletion.
+**Concepts Learned**
+- Deployment pipelines
+- Production environments
+- Automated releases
 
----
+### Phase 14 — Cloud Deployment
+**Implemented**
+- Render deployment
+- PostgreSQL integration
+- Environment configuration
 
-## Pagination
+**Concepts Learned**
+- Cloud Hosting
+- Production deployment
+- Environment management
 
-Supports pagination to efficiently retrieve large datasets.
+## 📂 Project Structure
+
+```
+FastAPI-Todo-API
+│
+├── .venv
+├── .vscode
+├── alembic
+│
+├── app
+│   ├── __pycache__
+│   ├── api
+│   ├── core
+│   ├── dependencies
+│   ├── exceptions
+│   ├── middleware
+│   ├── models
+│   ├── schemas
+│   ├── services
+│   ├── main.py
+│   ├── assets
+│   │   └── swagger-ui.png
+│   └── tests
+│
+├── .dockerignore
+├── .env
+├── .gitignore
+├── alembic.ini
+├── docker-compose.yml
+├── Dockerfile
+├── README.md
+└── requirements.txt
+```
+
+## 🛠 Tech Stack
+
+| Category | Technologies |
+|---|---|
+| **Backend** | FastAPI, Python 3.11 |
+| **Database** | PostgreSQL, SQLAlchemy ORM |
+| **Authentication** | JWT, OAuth2 |
+| **Validation** | Pydantic |
+| **Testing** | Pytest |
+| **DevOps** | Docker, Docker Compose, GitHub Actions |
+| **Deployment** | Render |
+
+## 🔐 Authentication Flow
+
+```
+Register User
+      ↓
+Login User
+      ↓
+Receive JWT Token
+      ↓
+Send Token in Authorization Header
+      ↓
+Access Protected Routes
+```
 
 Example:
-
-```http
-GET /tasks?skip=0&limit=10
+```
+Authorization: Bearer YOUR_ACCESS_TOKEN
 ```
 
-This prevents loading thousands of records at once.
+## 🚀 API Endpoints
 
----
+### Users
 
-# 🧠 Concepts Covered
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/users/register` | Register User |
+| POST | `/users/login` | Login User |
+| GET | `/users/me` | Get Current User |
 
-This project covers:
+### Tasks
 
-## FastAPI
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/tasks` | Create Task |
+| GET | `/tasks` | Get All Tasks |
+| GET | `/tasks/{task_id}` | Get Task |
+| PUT | `/tasks/{task_id}` | Update Task |
+| DELETE | `/tasks/{task_id}` | Delete Task |
+| PATCH | `/tasks/{task_id}/complete` | Complete Task |
 
-* Routing
-* Path Parameters
-* Query Parameters
-* Request Body Validation
-* Response Models
-* Dependency Injection
-* Status Codes
-
-## Pydantic
-
-* Request Validation
-* Response Serialization
-* Schema Design
-
-## Authentication
-
-* JWT Tokens
-* OAuth2 Password Flow
-* Protected Routes
-
-## Database
-
-* SQLAlchemy ORM
-* Relationships
-* Foreign Keys
-* Sessions
-
-## Database Migrations
-
-* Alembic
-* Version Controlled Schema Changes
-
-## Security
-
-* Password Hashing
-* Authorization
-* Ownership Validation
-
-## Production Practices
-
-* Project Structure
-* Separation of Concerns
-* Dependency Injection
-* Environment Variables
-
----
-
-# 🔗 API Endpoints
-
-## User Endpoints
-
-| Method | Endpoint        | Description                |
-| ------ | --------------- | -------------------------- |
-| POST   | /users/register | Register user              |
-| POST   | /users/login    | Login user                 |
-| GET    | /users/me       | Current authenticated user |
-
----
-
-## Task Endpoints
-
-| Method | Endpoint    | Description     |
-| ------ | ----------- | --------------- |
-| POST   | /tasks      | Create task     |
-| GET    | /tasks      | Get all tasks   |
-| GET    | /tasks/{id} | Get single task |
-| PUT    | /tasks/{id} | Update task     |
-| DELETE | /tasks/{id} | Delete task     |
-
----
-
-# ⚙️ Installation
+## 🧪 Run Locally
 
 Clone repository:
-
 ```bash
-git clone <repository_url>
-cd fastapi-todo-api
-```
-
-Create virtual environment:
-
-```bash
-python -m venv .venv
-```
-
-Activate environment:
-
-```bash
-.venv\Scripts\activate
+git clone https://github.com/Sk2059/FastAPI-Todo-API.git
 ```
 
 Install dependencies:
-
 ```bash
 pip install -r requirements.txt
 ```
 
-Configure environment variables:
-
-```env
-DATABASE_URL=
-SECRET_KEY=
-ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_MINUTES=30
-```
-
-Run migrations:
-
-```bash
-alembic upgrade head
-```
-
-Start server:
-
+Run application:
 ```bash
 uvicorn app.main:app --reload
 ```
 
-Open Swagger documentation:
+## 🐳 Docker
 
-```text
-http://127.0.0.1:8000/docs
+Build containers:
+```bash
+docker compose build
 ```
 
----
+Start containers:
+```bash
+docker compose up
+```
 
-# 🎯 Learning Outcomes
+## 👨‍💻 Author
 
-By building this project, the following backend concepts were practiced:
+**SK Singh**
 
-* Building REST APIs with FastAPI
-* Database design and relationships
-* Authentication and authorization
-* JWT implementation
-* API security best practices
-* Pagination and filtering
-* Dependency Injection
-* Database migrations
-* Production-style project structure
+GitHub: [@Sk2059](https://github.com/Sk2059)
 
----
+## ⭐ Future Improvements
 
-# 🚧 Future Improvements
-
-Planned features:
-
-* Task filtering
-* Task searching
-* Task sorting
-* Centralized exception handling
-* Logging middleware
-* Unit tests using Pytest
-* Docker support
-* CI/CD pipeline
-* Deployment to cloud providers
-* Redis caching
-* Background jobs
-
----
-
-# 👨‍💻 Author
-
-Developed as part of a backend engineering learning journey focused on modern Python API development using FastAPI and PostgreSQL.
+- Alembic Migrations
+- Filtering
+- Sorting
+- Due Dates
+- Priority Levels
+- Soft Deletes
+- Rate Limiting
+- Background Tasks
+- Redis Caching
+- Async SQLAlchemy
+- Celery Integration
