@@ -3,6 +3,10 @@ from app.api.router.user import router as user_router
 from app.api.router.task import router as task_router
 from app.middleware.loggging import logging_middleware
 
+from app.core.database import engine
+from app.core.database import Base
+Base.metadata.create_all(bind=engine)
+
 from app.exceptions.costom_exceptions import (
     TaskNotFoundException,
     UserNotFoundException,
