@@ -1,0 +1,29 @@
+services:
+  db:
+    image: postgres:17
+    container_name: todo_db
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DBPASSWORD}
+      POSTGRES_DB: todo_db
+
+    ports:
+      - "5432:5432"
+
+  api:
+    build: .
+
+    container_name: todo_api
+
+    depends_on:
+      - db
+
+    ports:
+      - "8000:8000"
+
+    environment:
+      DATABASE_URL: postgresql://postgres:${DBPASSWORD}@db:5432/todo_db
+      SECRET_KEY: ${SECRET_KEY}
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 30
