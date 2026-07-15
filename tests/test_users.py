@@ -23,6 +23,34 @@ def test_register_user():
     assert response.status_code == 201
 
 def test_login():
+    register_response = client.post(
+        "/users/register",
+        json={
+            "username": "login_user",
+            "email": "login@test.com",
+            "password": "password123"
+        }
+    )
+
+    print(register_response.status_code)
+    print(register_response.json())
+
+    response = client.post(
+        "/users/login",
+        data={
+            "username": "login@test.com",
+            "password": "password123"
+        }
+    )
+
+    print(response.status_code)
+    print(response.json())
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert "access_token" in data
     client.post(
         "/users/register",
         json={
@@ -32,13 +60,17 @@ def test_login():
         }
     )
 
-    response = client.post(
-        "/users/login",
-        data={
-            "username": "login@test.com",
-            "password": "password123"
-        }
+    register_response = client.post(
+    "/users/register",
+    json={
+        "username": "login_user",
+        "email": "login@test.com",
+        "password": "password123"
+    }
     )
+
+    print(register_response.status_code)
+    print(register_response.json())
 
     assert response.status_code == 200
 
