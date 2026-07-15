@@ -18,7 +18,7 @@ https://fastapi-todo-api-tbm4.onrender.com/docs
 
 ## ✨ Features
 
-### Authentication & Authorization
+### Authentication & Authorization 
 - User Registration
 - User Login
 - JWT Access Tokens
@@ -343,7 +343,7 @@ docker compose up
 
 ## 👨‍💻 Author
 
-**SK Singh**
+**SK Singh(Sabinam Mahato)**
 
 GitHub: [@Sk2059](https://github.com/Sk2059)
 
